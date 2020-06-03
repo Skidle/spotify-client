@@ -4,26 +4,24 @@ import { Row, Col } from 'antd';
 import { fetchCategories } from '../actions';
 import Category from '../components/Category';
 
-const CategoriesContainer = ({ onClick, categories }) => {
+const CategoriesContainer = ({ initFetch, categories }) => {
   useEffect(() => {
-    onClick();
-  }, [onClick]);
+    initFetch();
+  }, [initFetch]);
 
   return (
-    <>
-      <Row gutter={[24, 24]}>
-        {categories.items ? categories.items.map((item) => (
-          <Col key={item.id} span={6}>
-            <Category name={item.name} icon={item.icons[0]} />
-          </Col>
-        )) : <span>Loading...</span>}
-      </Row>
-    </>
+    <Row gutter={[24, 24]}>
+      {categories.items ? categories.items.map(({ id, name, icons }) => (
+        <Col key={id} span={6}>
+          <Category name={name} icon={icons[0]} id={id} />
+        </Col>
+      )) : <span>Loading...</span>}
+    </Row>
   );
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  onClick: () => fetchCategories(dispatch),
+  initFetch: () => fetchCategories(dispatch),
 });
 
 const mapStateToProps = (state) => ({

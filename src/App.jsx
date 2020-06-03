@@ -1,10 +1,20 @@
 import React from 'react';
-import Main from './containers/Main';
-
+import {
+  BrowserRouter as Router,
+  Switch,
+} from 'react-router-dom';
+import RouteWithLayout from './containers/RouteWithLayout';
+import CategoriesContainer from './containers/CategoriesContainer';
+import Playlists from './containers/Playlists';
 
 function App() {
   return (
-    <Main />
+    <Router>
+      <Switch>
+        <RouteWithLayout path="/" exact component={CategoriesContainer} />
+        <RouteWithLayout path="/:categoryId" component={Playlists} />
+      </Switch>
+    </Router>
   );
 }
 
