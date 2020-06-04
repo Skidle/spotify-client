@@ -1,18 +1,13 @@
-import URI from 'urijs';
+import { getAccessTokenFromUrl } from '../utils';
+import { USER_AUTHORIZED, CATEGORIES_FETCH, CATEGORY_PLAYLISTS_FETCH, PLAYLIST_TRACKS_FETCH } from './actionTypes';
+import store from '../store';
+import { SPOTIFY_API, GET_CATEGORIES } from '../constants';
 
-export const CATEGORIES_FETCH = 'CATEGORIES_FETCH';
-export const CATEGORY_PLAYLISTS_FETCH = 'CATEGORY_PLAYLISTS_FETCH';
-export const PLAYLIST_TRACKS_FETCH = 'PLAYLIST_TRACKS_FETCH';
-
-const SPOTIFY_API = 'https://api.spotify.com/v1/';
-const GET_CATEGORIES = `${SPOTIFY_API}browse/categories?limit=10`;
 const getCategoryPlaylistsUrl = (categoryId) => `${SPOTIFY_API}browse/categories/${categoryId}/playlists?limit=10`;
 const getPlaylistTracksUrl = (playlistId) => `${SPOTIFY_API}playlists/${playlistId}/tracks?limit=10`;
 
 const sendRequest = (url) => {
-  const urlUri = new URI(window.location);
-  const fragment = urlUri.fragment();
-  const token = fragment.split('&')[0].split('=')[1];
+  const token = getAccessTokenFromUrl() || store.getState().authorization.accessToken;
 
   return new Request(url, {
     method: 'GET',
@@ -22,6 +17,14 @@ const sendRequest = (url) => {
       Authorization: `Bearer ${token}`,
     },
   });
+};
+
+export const authorizeUser = (dispatch) => {
+  const accessToken = getAccessTokenFromUrl();
+
+  if (accessToken) {
+    dispatch({ type: USER_AUTHORIZED, accessToken });
+  }
 };
 
 export const fetchCategories = (dispatch) => {

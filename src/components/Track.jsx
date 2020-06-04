@@ -16,7 +16,7 @@ const Track = ({
   const artistNames = artists.map(({ name: artistName }) => artistName);
 
   return (
-    <Card>
+    <Card size="small">
       <List.Item
         actions={[<Rate style={{ fontSize: 20, marginBottom: '9px' }} defaultValue={getRate(popularity)} disabled allowHalf />]}
       >

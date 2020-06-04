@@ -12,7 +12,7 @@ const CategoriesContainer = ({ initFetch, categories }) => {
   return (
     <Row gutter={[24, 24]}>
       {categories.items ? categories.items.map(({ id, name, icons }) => (
-        <Col key={id} span={6}>
+        <Col key={id} span={6} xs={14} sm={10} md={9} lg={6}>
           <Category name={name} icon={icons[0]} id={id} />
         </Col>
       )) : <span>Loading...</span>}

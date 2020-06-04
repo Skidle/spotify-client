@@ -14,7 +14,7 @@ const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
     <Row gutter={[24, 24]}>
       {playlists[categoryId]
         ? playlists[categoryId].items.map(({ id, name, description, images }) => (
-          <Col key={id} span={6}>
+          <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
             <Playlist
               name={name}
               image={images[0]}

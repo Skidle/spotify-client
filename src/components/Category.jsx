@@ -13,8 +13,7 @@ const Category = ({
     <Card
       hoverable
       style={{ width: '250px' }}
-      cover={<img alt="Category icon" src={url} />}
-      // onClick={handleClick}
+      cover={<img alt="Category" src={url} />}
     >
       <Meta title={name} />
     </Card>

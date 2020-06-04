@@ -1,40 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
-import { Spin } from 'antd';
+import { authorizeUser } from '../actions';
 import Layout from '../components/Layout';
 import { AUTHORIZE_URL } from '../constants';
+import { getAccessTokenFromUrl } from '../utils';
 
-const RouteWithLayout = ({ isFetching, hasFailed, component: Component, ...other }) => {
-  // if (hasFailed) {
-  //   return (
-  //     <Layout>
-  //       <Empty />
-  //     </Layout>
-  //   );
-  // }
-
-  const isLoggedIn = true;
+const RouteWithLayout = ({ isUserAuthorized, init, component: Component, ...other }) => {
+  useEffect(() => {
+    init();
+  }, [init]);
 
   return (
     <Route
       {...other}
-      render={(props) => isLoggedIn ? (
-        <Layout>
-          {isFetching
-            ? <Spin />
-            : (
-              <Component {...props} />
-            )}
-        </Layout>
-      )
-        : window.location.replace(AUTHORIZE_URL)
-      }
+      render={(props) => (isUserAuthorized
+        ? (
+          <Layout>
+            <Component {...props} />
+          </Layout>
+        )
+        : window.location.replace(AUTHORIZE_URL))}
     />
   );
 };
 
+const mapStateToProps = (state) => {
+  const accessToken = getAccessTokenFromUrl();
+
+  return ({
+    isUserAuthorized: !!state.authorization.accessToken || !!accessToken,
+  });
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  init: () => authorizeUser(dispatch),
+});
+
 export default connect(
-  // mapStateToProps,
-  // mapDispatchToProps,
+  mapStateToProps,
+  mapDispatchToProps,
 )(RouteWithLayout);
