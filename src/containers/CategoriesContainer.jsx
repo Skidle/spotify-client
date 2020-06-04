@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
-import { fetchCategories } from '../actions';
 import Category from '../components/Category';
+import { noop } from '../utils';
 
-const CategoriesContainer = ({ initFetch, categories }) => {
+// TODO add dummy data for static version?
+
+const CategoriesContainer = ({ initFetch = noop, categories }) => {
   useEffect(() => {
     initFetch();
   }, [initFetch]);
@@ -20,15 +21,4 @@ const CategoriesContainer = ({ initFetch, categories }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  initFetch: () => fetchCategories(dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  categories: state.categories,
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(CategoriesContainer);
+export default CategoriesContainer;

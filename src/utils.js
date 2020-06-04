@@ -7,3 +7,5 @@ export const getAccessTokenFromUrl = () => {
 
   return accessToken;
 };
+
+export const noop = () => {};
