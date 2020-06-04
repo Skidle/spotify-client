@@ -11,7 +11,6 @@ const PlaylistTracksContainer = ({ tracks, initFetch, playlistId }) => {
   }, [initFetch, playlistId]);
 
   return (
-    // <div>
     <List>
       {tracks[playlistId]
         ? Object.entries(tracks[playlistId]).map(([, { track }]) => (

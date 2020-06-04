@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { Spin } from 'antd';
 import Layout from '../components/Layout';
+import { AUTHORIZE_URL } from '../constants';
 
 const RouteWithLayout = ({ isFetching, hasFailed, component: Component, ...other }) => {
   // if (hasFailed) {
@@ -13,10 +14,12 @@ const RouteWithLayout = ({ isFetching, hasFailed, component: Component, ...other
   //   );
   // }
 
+  const isLoggedIn = true;
+
   return (
     <Route
       {...other}
-      render={(props) => (
+      render={(props) => isLoggedIn ? (
         <Layout>
           {isFetching
             ? <Spin />
@@ -24,7 +27,9 @@ const RouteWithLayout = ({ isFetching, hasFailed, component: Component, ...other
               <Component {...props} />
             )}
         </Layout>
-      )}
+      )
+        : window.location.replace(AUTHORIZE_URL)
+      }
     />
   );
 };
