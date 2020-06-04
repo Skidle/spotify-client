@@ -9,22 +9,17 @@ const Playlist = ({
   name,
   description,
   id,
-  onClick,
-}) => {
-  const handleClick = () => onClick(id);
-
-  return (
-    <Link to={`/${id}`}>
-      <Card
-        hoverable
-        style={{ width: '250px' }}
-        cover={<img alt="Playlist" src={url} />}
-        onClick={handleClick}
-      >
-        <Meta title={name} description={description} />
-      </Card>
-    </Link>
-  );
-};
+  categoryId,
+}) => (
+  <Link to={`/${categoryId}/${id}`}>
+    <Card
+      hoverable
+      style={{ width: '250px' }}
+      cover={<img alt="Playlist" src={url} />}
+    >
+      <Meta title={name} description={description} />
+    </Card>
+  </Link>
+);
 
 export default Playlist;

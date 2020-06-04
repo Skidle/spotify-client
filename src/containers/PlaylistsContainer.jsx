@@ -5,7 +5,7 @@ import { Row, Col } from 'antd';
 import { fetchPlaylists } from '../actions';
 import Playlist from '../components/Playlist';
 
-const Playlists = ({ playlists, initFetch, categoryId }) => {
+const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
   useEffect(() => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
@@ -15,7 +15,13 @@ const Playlists = ({ playlists, initFetch, categoryId }) => {
       {playlists[categoryId]
         ? playlists[categoryId].items.map(({ id, name, description, images }) => (
           <Col key={id} span={6}>
-            <Playlist name={name} image={images[0]} id={id} description={description} />
+            <Playlist
+              name={name}
+              image={images[0]}
+              id={id}
+              categoryId={categoryId}
+              description={description}
+            />
           </Col>
         ))
         : <span>Loading...</span>}
@@ -35,4 +41,4 @@ const mapDispatchToProps = (dispatch) => ({
 export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Playlists));
+)(PlaylistsContainer));

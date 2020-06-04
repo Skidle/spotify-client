@@ -5,14 +5,16 @@ import {
 } from 'react-router-dom';
 import RouteWithLayout from './containers/RouteWithLayout';
 import CategoriesContainer from './containers/CategoriesContainer';
-import Playlists from './containers/Playlists';
+import PlaylistsContainer from './containers/PlaylistsContainer';
+import PlaylistTracksContainer from './containers/PlaylistTracksContainer';
 
 function App() {
   return (
     <Router>
       <Switch>
         <RouteWithLayout path="/" exact component={CategoriesContainer} />
-        <RouteWithLayout path="/:categoryId" component={Playlists} />
+        <RouteWithLayout path="/:categoryId" exact component={PlaylistsContainer} />
+        <RouteWithLayout path="/:categoryId/:playlistId" component={PlaylistTracksContainer} />
       </Switch>
     </Router>
   );

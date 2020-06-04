@@ -24,7 +24,20 @@ const playlists = (state = {}, action) => {
   }
 };
 
+const tracks = (state = {}, action) => {
+  switch (action.type) {
+    case 'PLAYLIST_TRACKS_FETCH':
+      return {
+        ...state,
+        [action.playlistId]: { ...action.tracks },
+      };
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   categories,
   playlists,
+  tracks,
 });
