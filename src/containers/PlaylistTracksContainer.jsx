@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
 import { List } from 'antd';
 import { fetchTracks } from '../actions';
+import { getTracks, getRouteCategoryId, getRoutePlaylistId } from '../selectors';
 import Track from '../components/Track';
 
 const PlaylistTracksContainer = ({ tracks, initFetch, playlistId }) => {
@@ -21,17 +22,17 @@ const PlaylistTracksContainer = ({ tracks, initFetch, playlistId }) => {
   );
 };
 
-const mapStateToProps = (state, props) => ({
-  tracks: state.tracks,
-  playlistId: props.match.params.playlistId,
-  categoryId: props.match.params.categoryId,
+const mapStateToProps = createStructuredSelector({
+  tracks: getTracks,
+  playlistId: getRoutePlaylistId,
+  categoryId: getRouteCategoryId,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   initFetch: (playlistId) => fetchTracks(dispatch, playlistId),
 });
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(PlaylistTracksContainer));
+)(PlaylistTracksContainer);

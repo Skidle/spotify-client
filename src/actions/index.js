@@ -1,13 +1,15 @@
-import { getAccessTokenFromUrl } from '../utils';
+import { getUrlAccessToken } from '../utils';
 import { USER_AUTHORIZED, CATEGORIES_FETCH, CATEGORY_PLAYLISTS_FETCH, PLAYLIST_TRACKS_FETCH } from './actionTypes';
 import store from '../store';
+import { isUserAuthorized } from '../selectors';
 import { SPOTIFY_API, GET_CATEGORIES } from '../constants';
 
 const getCategoryPlaylistsUrl = (categoryId) => `${SPOTIFY_API}browse/categories/${categoryId}/playlists?limit=10`;
 const getPlaylistTracksUrl = (playlistId) => `${SPOTIFY_API}playlists/${playlistId}/tracks?limit=10`;
 
 const sendRequest = (url) => {
-  const token = getAccessTokenFromUrl() || store.getState().authorization.accessToken;
+  const state = store.getState();
+  const token = isUserAuthorized(state);
 
   return new Request(url, {
     method: 'GET',
@@ -20,7 +22,7 @@ const sendRequest = (url) => {
 };
 
 export const authorizeUser = (dispatch) => {
-  const accessToken = getAccessTokenFromUrl();
+  const accessToken = getUrlAccessToken();
 
   if (accessToken) {
     dispatch({ type: USER_AUTHORIZED, accessToken });

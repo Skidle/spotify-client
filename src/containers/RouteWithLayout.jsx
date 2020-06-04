@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { Route } from 'react-router-dom';
 import { authorizeUser } from '../actions';
+import { isUserAuthorized as isUserAuthorizedSelector } from '../selectors';
 import Layout from '../components/Layout';
 import { AUTHORIZE_URL } from '../constants';
-import { getAccessTokenFromUrl } from '../utils';
 
 const RouteWithLayout = ({ isUserAuthorized, init, component: Component, ...other }) => {
   useEffect(() => {
@@ -25,13 +26,9 @@ const RouteWithLayout = ({ isUserAuthorized, init, component: Component, ...othe
   );
 };
 
-const mapStateToProps = (state) => {
-  const accessToken = getAccessTokenFromUrl();
-
-  return ({
-    isUserAuthorized: !!state.authorization.accessToken || !!accessToken,
-  });
-};
+const mapStateToProps = createStructuredSelector({
+  isUserAuthorized: isUserAuthorizedSelector,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   init: () => authorizeUser(dispatch),

@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { Row, Col } from 'antd';
 import { fetchCategories } from '../actions';
+import { getCategories } from '../selectors';
 import Category from '../components/Category';
 
 const CategoriesContainer = ({ initFetch, categories }) => {
@@ -24,8 +26,8 @@ const mapDispatchToProps = (dispatch) => ({
   initFetch: () => fetchCategories(dispatch),
 });
 
-const mapStateToProps = (state) => ({
-  categories: state.categories,
+const mapStateToProps = createStructuredSelector({
+  categories: getCategories,
 });
 
 export default connect(
