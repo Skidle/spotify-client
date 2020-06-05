@@ -48,7 +48,8 @@
           "multiline": true,
           "consistent": true
         }
-      ]
+      ],
+      "arrow-parens": ["error", "as-needed"]
     }
   },
   "browserslist": {

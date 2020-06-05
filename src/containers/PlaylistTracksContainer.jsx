@@ -28,8 +28,8 @@ const mapStateToProps = createStructuredSelector({
   categoryId: getRouteCategoryId,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  initFetch: (playlistId) => fetchTracks(dispatch, playlistId),
+const mapDispatchToProps = dispatch => ({
+  initFetch: playlistId => fetchTracks(dispatch, playlistId),
 });
 
 export default connect(

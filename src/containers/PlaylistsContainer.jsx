@@ -3,40 +3,45 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Row, Col } from 'antd';
 import { fetchPlaylists } from '../actions';
-import { getPlaylists, getRouteCategoryId } from '../selectors';
+import { getRoutePlaylistIds, getRouteCategoryId, getPlaylistsStatus } from '../selectors';
+import { STATUS_FETCHING, STATUS_FAILURE } from '../constants';
 import Playlist from '../components/Playlist';
 
-const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
+const PlaylistsContainer = ({ playlistIds, initFetch, categoryId, status }) => {
   useEffect(() => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
 
+  if (status === STATUS_FETCHING) {
+    return <span>Loading...</span>;
+  }
+
+  if (status === STATUS_FAILURE) {
+    return <span>Error</span>;
+  }
+
   return (
     <Row gutter={[24, 24]}>
-      {playlists[categoryId]
-        ? playlists[categoryId].items.map(({ id, name, description, images }) => (
-          <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
-            <Playlist
-              name={name}
-              image={images[0]}
-              id={id}
-              categoryId={categoryId}
-              description={description}
-            />
-          </Col>
-        ))
-        : <span>Loading...</span>}
+      {playlistIds.map(id => (
+        <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
+          <Playlist
+            id={id}
+            categoryId={categoryId}
+          />
+        </Col>
+      ))}
     </Row>
   );
 };
 
 const mapStateToProps = createStructuredSelector({
-  playlists: getPlaylists,
+  playlistIds: getRoutePlaylistIds,
   categoryId: getRouteCategoryId,
+  status: getPlaylistsStatus,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  initFetch: (categoryId) => fetchPlaylists(dispatch, categoryId),
+const mapDispatchToProps = dispatch => ({
+  initFetch: categoryId => fetchPlaylists(dispatch, categoryId),
 });
 
 export default connect(

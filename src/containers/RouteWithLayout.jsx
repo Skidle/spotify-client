@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Route } from 'react-router-dom';
 import { authorizeUser } from '../actions';
-import { isUserAuthorized as isUserAuthorizedSelector } from '../selectors';
+import { getAccessToken } from '../selectors';
 import Layout from '../components/Layout';
 import { AUTHORIZE_URL } from '../constants';
 
@@ -15,7 +15,7 @@ const RouteWithLayout = ({ isUserAuthorized, init, component: Component, ...othe
   return (
     <Route
       {...other}
-      render={(props) => (isUserAuthorized
+      render={props => (isUserAuthorized
         ? (
           <Layout>
             <Component {...props} />
@@ -27,10 +27,10 @@ const RouteWithLayout = ({ isUserAuthorized, init, component: Component, ...othe
 };
 
 const mapStateToProps = createStructuredSelector({
-  isUserAuthorized: isUserAuthorizedSelector,
+  isUserAuthorized: getAccessToken,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   init: () => authorizeUser(dispatch),
 });
 
