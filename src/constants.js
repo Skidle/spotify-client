@@ -10,3 +10,5 @@ export const GET_CATEGORIES = `${SPOTIFY_API}browse/categories?limit=10&country=
 export const STATUS_FETCHING = 'fetching';
 export const STATUS_SUCCESS = 'success';
 export const STATUS_FAILURE = 'failure';
+
+export const ACCESS_TOKEN_STORAGE_KEY = 'accessToken';
