@@ -14,7 +14,7 @@ const Category = ({
   },
   id,
 }) => (
-  <Link to={`/${id}`}>
+  <Link to={`/category=${id}`}>
     <Card
       hoverable
       style={{ width: '250px' }}

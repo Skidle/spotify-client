@@ -3,29 +3,36 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { List } from 'antd';
 import { fetchTracks } from '../actions';
-import { getTracks, getRouteCategoryId, getRoutePlaylistId } from '../selectors';
+import { getRouteTrackIds, getRoutePlaylistId, getTracksStatus } from '../selectors';
+import { STATUS_FETCHING, STATUS_FAILURE } from '../constants';
 import Track from '../components/Track';
 
-const PlaylistTracksContainer = ({ tracks, initFetch, playlistId }) => {
+const PlaylistTracksContainer = ({ trackIds, initFetch, playlistId, status }) => {
   useEffect(() => {
     initFetch(playlistId);
   }, [initFetch, playlistId]);
 
+  if (status === STATUS_FETCHING) {
+    return <span>Loading...</span>;
+  }
+
+  if (status === STATUS_FAILURE) {
+    return <span>Error</span>;
+  }
+
   return (
     <List>
-      {tracks[playlistId]
-        ? Object.entries(tracks[playlistId]).map(([, { track }]) => (
-          <Track key={track.id} {...track} />
-        ))
-        : <span>Loading...</span>}
+      {trackIds.map(id => (
+        <Track key={id} id={id} playlistId={playlistId} />
+      ))}
     </List>
   );
 };
 
 const mapStateToProps = createStructuredSelector({
-  tracks: getTracks,
+  trackIds: getRouteTrackIds,
   playlistId: getRoutePlaylistId,
-  categoryId: getRouteCategoryId,
+  status: getTracksStatus,
 });
 
 const mapDispatchToProps = dispatch => ({

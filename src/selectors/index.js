@@ -63,6 +63,36 @@ export const getPlaylistsStatus = createSelector(
 
 export const getTracks = state => state.tracks;
 
+const getTracksByPlaylistId = getTypeOfPlaylistId => createSelector(
+  getTypeOfPlaylistId,
+  getTracks,
+  (playlistId, tracks) => tracks[playlistId] || {},
+);
+
+export const getPlaylistTracks = getTracksByPlaylistId((state, props) => props.playlistId);
+export const getRoutePlaylistTracks = getTracksByPlaylistId(getRoutePlaylistId);
+
+export const getRouteTrackIds = createSelector(
+  getRoutePlaylistTracks,
+  tracks => tracks.ids,
+);
+
+export const getTracksData = createSelector(
+  getPlaylistTracks,
+  tracks => tracks.data,
+);
+
+export const getTrack = createSelector(
+  getTracksData,
+  (state, props) => props.id,
+  (tracksData, id) => tracksData[id],
+);
+
+export const getTracksStatus = createSelector(
+  getRoutePlaylistTracks,
+  tracks => tracks.status || STATUS_FETCHING,
+);
+
 export const getAuthorization = state => state.authorization;
 
 export const getStoredAccessToken = createSelector(

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { USER_AUTHORIZED, PLAYLIST_TRACKS_FETCH, CATEGORIES_FETCH_SUCCESS, CATEGORIES_FETCH_FAILURE, CATEGORIES_FETCH_START, PLAYLISTS_FETCH_SUCCESS, PLAYLISTS_FETCH_FAILURE, PLAYLISTS_FETCH_START } from '../actions/actionTypes';
+import { USER_AUTHORIZED, CATEGORIES_FETCH_SUCCESS, CATEGORIES_FETCH_FAILURE, CATEGORIES_FETCH_START, PLAYLISTS_FETCH_SUCCESS, PLAYLISTS_FETCH_FAILURE, PLAYLISTS_FETCH_START, TRACKS_FETCH_SUCCESS, TRACKS_FETCH_FAILURE, TRACKS_FETCH_START } from '../actions/actionTypes';
 import { STATUS_FETCHING, STATUS_SUCCESS, STATUS_FAILURE } from '../constants';
 
 const initialEntitiesState = {
@@ -65,10 +65,30 @@ const playlists = (state = {}, action) => {
 
 const tracks = (state = {}, action) => {
   switch (action.type) {
-    case PLAYLIST_TRACKS_FETCH:
+    case TRACKS_FETCH_START:
       return {
         ...state,
-        [action.playlistId]: { ...action.tracks },
+        [action.playlistId]: {
+          ...state[action.playlistId],
+          status: STATUS_FETCHING,
+        },
+      };
+    case TRACKS_FETCH_SUCCESS:
+      return {
+        ...state,
+        [action.playlistId]: {
+          ...state[action.playlistId],
+          ...action.tracks,
+          status: STATUS_SUCCESS,
+        },
+      };
+    case TRACKS_FETCH_FAILURE:
+      return {
+        ...state,
+        [action.playlistId]: {
+          ...state[action.playlistId],
+          status: STATUS_FAILURE,
+        },
       };
     default:
       return state;
