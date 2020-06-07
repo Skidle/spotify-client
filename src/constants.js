@@ -4,3 +4,5 @@ export const AUTHORIZE_URL = `https://accounts.spotify.com/authorize?client_id=$
 
 export const SPOTIFY_API = 'https://api.spotify.com/v1/';
 export const GET_CATEGORIES = `${SPOTIFY_API}browse/categories?limit=10&country=cz`;
+
+export const ACCESS_TOKEN_STORAGE_KEY = 'accessToken';

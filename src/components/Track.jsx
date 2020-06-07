@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Avatar, Rate, Card } from 'antd';
 
 // eslint-disable-next-line no-mixed-operators
-const getRate = (popularity) => popularity * 5 / 100;
+const getRate = popularity => popularity * 5 / 100;
 
 const Track = ({
   name,

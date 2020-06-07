@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { noop } from '../utils';
 import Playlist from '../components/Playlist';
+import { playlists as DUMMY_PLAYLISTS } from '../dummy.json';
 
-const PlaylistsContainer = ({ playlists, initFetch = noop, categoryId }) => {
+const PlaylistsContainer = ({ playlists = DUMMY_PLAYLISTS, initFetch = noop, categoryId = 'pop' }) => {
   useEffect(() => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
@@ -28,4 +28,4 @@ const PlaylistsContainer = ({ playlists, initFetch = noop, categoryId }) => {
   );
 };
 
-export default withRouter(PlaylistsContainer);
+export default PlaylistsContainer;

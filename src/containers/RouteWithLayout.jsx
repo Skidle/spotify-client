@@ -1,23 +1,21 @@
 import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { AUTHORIZE_URL } from '../constants';
+import { authorizeUser } from '../utils';
 
-const RouteWithLayout = ({ isUserAuthorized = true, init, component: Component, ...other }) => {
+const RouteWithLayout = ({ init, component: Component, ...other }) => {
   useEffect(() => {
-    init();
+    authorizeUser();
   }, [init]);
 
   return (
     <Route
       {...other}
-      render={(props) => (isUserAuthorized
-        ? (
-          <Layout>
-            <Component {...props} />
-          </Layout>
-        )
-        : window.location.replace(AUTHORIZE_URL))}
+      render={props => (
+        <Layout>
+          <Component {...props} />
+        </Layout>
+      )}
     />
   );
 };

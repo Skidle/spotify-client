@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { Row, Col } from 'antd';
 import Category from '../components/Category';
 import { noop } from '../utils';
+import { categories as DUMMY_CATEGORIES } from '../dummy.json';
 
-// TODO add dummy data for static version?
-
-const CategoriesContainer = ({ initFetch = noop, categories }) => {
+const CategoriesContainer = ({ initFetch = noop, categories = DUMMY_CATEGORIES }) => {
   useEffect(() => {
     initFetch();
   }, [initFetch]);

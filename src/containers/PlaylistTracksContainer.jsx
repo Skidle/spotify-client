@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
 import { List } from 'antd';
 import { noop } from '../utils';
 import Track from '../components/Track';
+import { tracks as DUMMY_TRACKS } from '../dummy.json';
 
-const PlaylistTracksContainer = ({ tracks, initFetch = noop, playlistId }) => {
+const PlaylistTracksContainer = ({ tracks = DUMMY_TRACKS, initFetch = noop, playlistId = '37i9dQZF1DX1kQODfnjf4u' }) => {
   useEffect(() => {
     initFetch(playlistId);
   }, [initFetch, playlistId]);
@@ -20,4 +20,4 @@ const PlaylistTracksContainer = ({ tracks, initFetch = noop, playlistId }) => {
   );
 };
 
-export default withRouter(PlaylistTracksContainer);
+export default PlaylistTracksContainer;
