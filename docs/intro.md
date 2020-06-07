@@ -8,40 +8,46 @@ Let's describe these concepts in a little more detail, using a simple example. I
 
 So we dispatch an **action**, plain JS object that must have a _type_ property:
 
-    { type: 'OPEN_SIDEBAR', opened: true }
+  ```js
+  { type: 'OPEN_SIDEBAR', opened: true }
+  ```
    Action is then sent to a **reducer**, pure function that tells us how to change state based on the action:
    
-
-    const initialState = { opened: false };
-    
-    function sidebar(state = initialState, action) {
-	    switch (action.type) {
-		    case OPEN_SIDEBAR:
-			    return {
-				    ...state,
-				    opened: action.opened,
-			    },
-			default:
-				return state;
-	    }
+  ```js
+  const initialState = { opened: false };
+  
+  function sidebar(state = initialState, action) {
+    switch (action.type) {
+      case OPEN_SIDEBAR:
+        return {
+          ...state,
+          opened: action.opened,
+        },
+    default:
+      return state;
     }
+  }
+  ```
     
    Reducer updates **store**, that is an object that holds the application state. We create only 1 store per Redux app:
    
-    import { createStore } from 'redux';
-    import sidebar from './reducers';
-    
-    const store = createStore(sidebar);
+  ```js
+  import { createStore } from 'redux';
+  import sidebar from './reducers';
+  
+  const store = createStore(sidebar);
+  ```
 
    
    Now let's open that sidebar:
    
-
-    console.log(store.getState()); // { sidebar: { opened: false }}
-    
-    store.dispatch({ type: 'OPEN_SIDEBAR', opened: true }};
-    
-    console.log(store.getState()); // {sidebar: { opened: true }};
+  ```js
+  console.log(store.getState()); // { sidebar: { opened: false }}
+  
+  store.dispatch({ type: 'OPEN_SIDEBAR', opened: true }};
+  
+  console.log(store.getState()); // {sidebar: { opened: true }};
+  ```
  
 :tada:
 
