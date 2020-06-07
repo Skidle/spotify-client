@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
-import Layout from '../components/Layout';
+import Layout from './Layout';
 import { authorizeUser } from '../utils';
 
 const RouteWithLayout = ({ init, component: Component, ...other }) => {
