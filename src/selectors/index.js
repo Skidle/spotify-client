@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import { getUrlAccessToken } from '../utils';
 import { STATUS_FETCHING } from '../constants';
 
 export const getRouteParam = param => (state, props) => props.match.params[param];
@@ -91,17 +90,4 @@ export const getTrack = createSelector(
 export const getTracksStatus = createSelector(
   getRoutePlaylistTracks,
   tracks => tracks.status || STATUS_FETCHING,
-);
-
-export const getAuthorization = state => state.authorization;
-
-export const getStoredAccessToken = createSelector(
-  getAuthorization,
-  authorization => authorization.accessToken,
-);
-
-export const getAccessToken = createSelector(
-  getStoredAccessToken,
-  getUrlAccessToken,
-  (storedToken, urlToken) => storedToken || urlToken,
 );

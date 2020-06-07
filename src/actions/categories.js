@@ -35,7 +35,7 @@ export const fetchCategoriesSuccess = data => {
 
 export const fetchCategories = dispatch => {
   dispatch(fetchCategoriesStart());
-  fetch(sendRequest(GET_CATEGORIES))
+  sendRequest(GET_CATEGORIES)
     .then(response => response.json())
     .then(({ categories }) => dispatch(fetchCategoriesSuccess(categories)))
     .catch(error => dispatch(fetchCategoriesFailure(error)));

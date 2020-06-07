@@ -37,7 +37,7 @@ export const fetchPlaylistsSuccess = ({ data, categoryId }) => {
 
 export const fetchPlaylists = (dispatch, categoryId) => {
   dispatch(fetchPlaylistsStart(categoryId));
-  fetch(sendRequest(getCategoryPlaylistsUrl(categoryId)))
+  sendRequest(getCategoryPlaylistsUrl(categoryId))
     .then(response => response.json())
     .then(({ playlists }) => dispatch(fetchPlaylistsSuccess({ data: playlists, categoryId })))
     .catch(error => dispatch(fetchPlaylistsFailure({ error, categoryId })));

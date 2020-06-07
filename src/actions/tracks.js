@@ -49,7 +49,7 @@ export const fetchTracksSuccess = ({ data, playlistId }) => {
 
 export const fetchTracks = (dispatch, playlistId) => {
   dispatch(fetchTracksStart(playlistId));
-  fetch(sendRequest(getPlaylistTracksUrl(playlistId)))
+  sendRequest(getPlaylistTracksUrl(playlistId))
     .then(response => response.json())
     .then(({ items }) => dispatch(fetchTracksSuccess({ data: items, playlistId })))
     .catch(error => dispatch(fetchTracksFailure({ error, playlistId })));

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { USER_AUTHORIZED, CATEGORIES_FETCH_SUCCESS, CATEGORIES_FETCH_FAILURE, CATEGORIES_FETCH_START, PLAYLISTS_FETCH_SUCCESS, PLAYLISTS_FETCH_FAILURE, PLAYLISTS_FETCH_START, TRACKS_FETCH_SUCCESS, TRACKS_FETCH_FAILURE, TRACKS_FETCH_START } from '../actions/actionTypes';
+import { CATEGORIES_FETCH_SUCCESS, CATEGORIES_FETCH_FAILURE, CATEGORIES_FETCH_START, PLAYLISTS_FETCH_SUCCESS, PLAYLISTS_FETCH_FAILURE, PLAYLISTS_FETCH_START, TRACKS_FETCH_SUCCESS, TRACKS_FETCH_FAILURE, TRACKS_FETCH_START } from '../actions/actionTypes';
 import { STATUS_FETCHING, STATUS_SUCCESS, STATUS_FAILURE } from '../constants';
 
 const initialEntitiesState = {
@@ -95,21 +95,8 @@ const tracks = (state = {}, action) => {
   }
 };
 
-const authorization = (state = {}, action) => {
-  switch (action.type) {
-    case USER_AUTHORIZED:
-      return {
-        ...state,
-        accessToken: action.accessToken,
-      };
-    default:
-      return state;
-  }
-};
-
 export default combineReducers({
   categories,
   playlists,
   tracks,
-  authorization,
 });
