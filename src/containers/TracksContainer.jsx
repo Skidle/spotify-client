@@ -4,7 +4,7 @@ import { noop } from '../utils';
 import Track from '../components/Track';
 import { tracks as DUMMY_TRACKS } from '../dummy.json';
 
-const TracksContainer = ({ tracks = DUMMY_TRACKS, initFetch = noop, playlistId = '37i9dQZF1DX1kQODfnjf4u' }) => {
+const TracksContainer = ({ tracks, initFetch, playlistId }) => {
   useEffect(() => {
     initFetch(playlistId);
   }, [initFetch, playlistId]);
@@ -18,6 +18,12 @@ const TracksContainer = ({ tracks = DUMMY_TRACKS, initFetch = noop, playlistId =
         : <span>Loading...</span>}
     </List>
   );
+};
+
+TracksContainer.defaultProps = {
+  initFetch: noop,
+  tracks: DUMMY_TRACKS,
+  playlistId: '37i9dQZF1DX1kQODfnjf4u',
 };
 
 export default TracksContainer;

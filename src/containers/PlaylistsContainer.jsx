@@ -4,7 +4,7 @@ import { noop } from '../utils';
 import Playlist from '../components/Playlist';
 import { playlists as DUMMY_PLAYLISTS } from '../dummy.json';
 
-const PlaylistsContainer = ({ playlists = DUMMY_PLAYLISTS, initFetch = noop, categoryId = 'pop' }) => {
+const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
   useEffect(() => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
@@ -26,6 +26,12 @@ const PlaylistsContainer = ({ playlists = DUMMY_PLAYLISTS, initFetch = noop, cat
         : <span>Loading...</span>}
     </Row>
   );
+};
+
+PlaylistsContainer.defaultProps = {
+  initFetch: noop,
+  playlists: DUMMY_PLAYLISTS,
+  categoryId: 'pop',
 };
 
 export default PlaylistsContainer;

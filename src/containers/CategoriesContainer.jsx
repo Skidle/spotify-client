@@ -4,7 +4,7 @@ import Category from '../components/Category';
 import { noop } from '../utils';
 import { categories as DUMMY_CATEGORIES } from '../dummy.json';
 
-const CategoriesContainer = ({ initFetch = noop, categories = DUMMY_CATEGORIES }) => {
+const CategoriesContainer = ({ initFetch, categories }) => {
   useEffect(() => {
     initFetch();
   }, [initFetch]);
@@ -18,6 +18,11 @@ const CategoriesContainer = ({ initFetch = noop, categories = DUMMY_CATEGORIES }
       )) : <span>Loading...</span>}
     </Row>
   );
+};
+
+CategoriesContainer.defaultProps = {
+  initFetch: noop,
+  categories: DUMMY_CATEGORIES,
 };
 
 export default CategoriesContainer;

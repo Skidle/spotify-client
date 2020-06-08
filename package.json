@@ -46,7 +46,10 @@
           "consistent": true
         }
       ],
-      "arrow-parens": ["error", "as-needed"]
+      "arrow-parens": [
+        "error",
+        "as-needed"
+      ]
     }
   },
   "browserslist": {
