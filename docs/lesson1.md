@@ -1,6 +1,6 @@
 ## Lesson 1
 
-#### What with all those files?
+### What with all those files?
 Before we start with Redux, let's take a look at the React app we have here:
 
 	public/
@@ -38,7 +38,8 @@ And then on every request to the API, we retrieve the access token from local st
 
 We use [React Router](https://reacttraining.com/react-router/web/guides/quick-start) here to switch between pages and [Ant Design](https://ant.design/components/overview/) library to make our app a bit prettier.
 
-#### Let's add Redux!
+----------
+### Let's add Redux!
 
 Install `redux` , `react-redux` libraries and developer tools:
 
@@ -172,13 +173,15 @@ Now you should see `CATEGORIES_FETCH` and updated state in Redux dev tools.
 
 We fetched some real data, stored them in Redux and represented them in the view 🎉
 
-#### Exercise
+----------
+
+### Exercise
 
 Try following the same steps for Playlists: you need to create an action to fetch them, a reducer to store them and then connect `PlaylistsContainer` to the store.
 
 _Hints_:
 
-Your state should look like this:
+- Your state should look like this:
 
 ```
 playlists: {
@@ -193,7 +196,9 @@ playlists: {
 }
 ```
 
-You can access current `categoryId` from route as `props.match.params.categoryId`.
+- You can access current `categoryId` from route as `props.match.params.categoryId`.
+
+--------------------
 
 <details>
   <summary>Solution for playlists</summary>
