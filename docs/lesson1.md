@@ -162,12 +162,86 @@ export default connect(
 Now since we've added connected props, you can remove default dummy ones:
 
 ```js
-CategoriesContainer.defaultProps  = {
+CategoriesContainer.defaultProps = {
   initFetch: noop,
   categories: DUMMY_CATEGORIES,
 };
 ```
 
-Now you should see `CATEGORIES_FETCH` and updated state in Redux dev ools.
+Now you should see `CATEGORIES_FETCH` and updated state in Redux dev tools.
 
 We fetched some real data, stored them in Redux and represented them in the view 🎉
+
+#### Exercise
+
+Try following the same steps for Playlists: you need to create an action to fetch them, a reducer to store them and then connect `PlaylistsContainer` to the store.
+
+_Hints_:
+
+Your state should look like this:
+
+```
+playlists: {
+  [categoryId_1]: {
+    ...,
+    items,
+  },
+  [categoryId_2]: {
+    ...,
+    items,
+  }
+}
+```
+
+You can access current `categoryId` from route as `props.match.params.categoryId`.
+
+<details>
+  <summary>Solution for playlists</summary>
+  
+  ```js
+  // reducers/index.js
+
+  const playlists = (state = {}, action) => {
+    switch (action.type) {
+      case 'PLAYLISTS_FETCH':
+        return {
+          ...state,
+          [action.categoryId]: { ...action.playlists },
+        };
+        default:
+          return state;
+    }
+  };
+
+  export default combineReducers({
+    categories,
+    playlists,
+  });
+  ```
+
+  ```js
+  // actions/index.js
+
+  export const fetchPlaylists = (dispatch, categoryId) => {
+    sendRequest(getCategoryPlaylistsUrl(categoryId))
+      .then((response) => response.json())
+      .then(({ playlists }) => dispatch({ type: 'PLAYLISTS_FETCH', playlists, categoryId }));
+  };
+  ```
+  
+  ```js
+  // PlaylistsContainer.jsx
+
+  const mapStateToProps = (state, props) => ({
+    playlists: state.playlists,
+    categoryId: props.match.params.categoryId,
+  });
+
+  const mapDispatchToProps = dispatch => ({
+    initFetch: categoryId => fetchPlaylists(dispatch, categoryId),
+  });
+  ```
+  
+</details>
+
+Tracks part is be very similar to playlists, check out solution in `version-1-solution` branch.
