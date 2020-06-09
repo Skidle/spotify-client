@@ -1,4 +1,4 @@
-## Lesson 2 - refactoring
+## Lesson 2
 
 ### Refactoring
 
@@ -432,11 +432,9 @@ Let's apply this to our state:
       'toplists',
       'at_home',
     ],
-    status: 'success',
   },
   playlists: {
     rock: {
-      status: 'success',
       data: {
         '37i9dQZF1DX4x0y4AP3Q3A': {
           id: '37i9dQZF1DX4x0y4AP3Q3A',
@@ -452,7 +450,6 @@ Let's apply this to our state:
   },
   tracks: {
     '37i9dQZF1DX4x0y4AP3Q3A': {
-      status: 'success',
       data: {
         '4r8QhhrnrytgjkDHzHjU8m': {
           id: '4r8QhhrnrytgjkDHzHjU8m',
@@ -606,7 +603,6 @@ Try following the same steps for Playlists: you need to create a `transformPlayl
   ]
 }
 ```
-
 --------------------
 
 <details>
@@ -638,6 +634,7 @@ const transformPlaylists = ({ items }) => {
 };
 
 // actions/index.js
+
 export const fetchPlaylists = (dispatch, categoryId) => {
   sendRequest(getCategoryPlaylistsUrl(categoryId))
     .then((response) => response.json())
@@ -647,166 +644,244 @@ export const fetchPlaylists = (dispatch, categoryId) => {
       dispatch({ type: PLAYLISTS_FETCH, playlists: transformedPlaylists, categoryId })
     });
 };
-
 ```
-  
 </details>
 
 Tracks part is similar to the other entities, try doing it yourself and then check out the solution in `lesson-2-solution` branch.
+
+You could notice that trying to run the app gives us errors now. We changed the structure of the state, so now we need to update our components/containers. This means that our view is tightly coupled with the state, we're going to try and change that in the next section.
 
 -----------
 
 ### Selectors
 
-[Selectors](https://redux.js.org/recipes/computing-derived-data) are functions that know a path to a particular subset of the state and then return derived data from it. 
+[Selectors](https://redux.js.org/recipes/computing-derived-data) are functions that take `state` and `props` as its arguments and know a path to a particular subset of the state to then return derived data from it. 
 
 We normalized the store, so that it has only relevant data with minimal levels of nesting. Now we can move the logic to compute derived data to selectors, this will cut down on repetition. We're also going to use [Reselect library](https://github.com/reduxjs/reselect), that has implemented caching for selectors.
 
-TBA steps
-
----------------------
-
-### Async actions
-
-We're using asynchronous API (it can return results with delay or not give us anything at all) but we're not handling this correctly.
-
-E.g. if we don't have any categories in the store, we just show `Loading...`, but API request may have failed completely and we should show the error to the user and a possible exit out of this Error state.
-
-Also if you load the app, open one of the playlists, then click on the logo to go back, and open Redux dev tools, you can see that we've just fetched categories twice (even though these are identical data). It might not be that visible for a small app and when you have decent Internet connection, but it's still a problem worth solving. 
-
-TBA steps
-
----------------------
-
-### Generating reducers
-
-Last but not least we're going to reduce the boilerplate code for creating reducers (pun not intended). 
-
-We can turn this:
+First, let's create `src/selectors` folder and just define getters for main parts of the state there:
 
 ```js
-const initialEntitiesState = {
-  data: {},
-  ids: [],
-  status: '',
-};
+// selectors/index.js
 
-const categories = (state = initialEntitiesState, action) => {
-  switch (action.type) {
-    case CATEGORIES_FETCH_START:
-      return {
-        ...state,
-        status: STATUS_FETCHING,
-      };
-    case CATEGORIES_FETCH_SUCCESS:
-      return {
-        ...state,
-        ...action.categories,
-        status: STATUS_SUCCESS,
-      };
-    case CATEGORIES_FETCH_FAILURE:
-      return {
-        ...state,
-        status: STATUS_FAILURE,
-      };
-    default:
-      return state;
-  }
-};
+export const getCategories = state => state.categories;
+
+export const getPlaylists = state => state.playlists;
+
+export const getTracks = state => state.tracks;
+
 ```
 
-into this slightly shorter and more readable version:
+We could already substitute some of the functions in `mapStateToProps` with our new getters, but it wouldn't add much benefit. Instead, let's add `reselect` library:
+
+    yarn add reselect
+
+Reselect provides a function `createSelector` for creating memoized (cached) selectors. It takes an array of input-selectors and a transform function as its arguments. We can use it to get slices of e.g. categories state:
 
 ```js
-const categories = createReducer(initialEntitiesState, {
-  [CATEGORIES_FETCH_START]: (state, action) => {
-    ...state,
-    status: STATUS_FETCHING,
-  },
-  [CATEGORIES_FETCH_SUCCESS]: (state, action) => {
-    ...state,
-    ...action.categories,
-    status: STATUS_SUCCESS,
-  },
-  [CATEGORIES_FETCH_FAILURE]: (state, action) => {
-    ...state,
-    status: STATUS_FAILURE,
-  },
-});
+// selectors/index.js
+
+import { createSelector } from 'reselect';
+
+export const getCategories = state => state.categories;
+
+export const getCategoriesData = createSelector(
+  getCategories,
+  categories => categories.data, // createSelector calls () => categories.data on the result of getCategories
+);
+
+export const getCategoryIds = createSelector(
+  getCategories,
+  categories => categories.ids,
+);
 ```
 
-This is possible thanks to `createReducer` [helper](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers):
-
+Besides that, selector can also return a slice of props:
 ```js
-function createReducer(initialState, handlers) {
-  return function reducer(state = initialState, action) {
-    if (handlers.hasOwnProperty(action.type)) {
-      return handlers[action.type](state, action)
-    } else {
-      return state
-    }
-  }
+const getIdFromProps = (state, props) => props.id;
+```
+
+Now if we look back at how the state looks for our categories data...:
+```js
+{
+  ['category_id1']: {
+    id: 'category_id1',
+    name,
+    imageUrl,
+  },
+  ['category_id2']: {
+    id,
+    name,
+    imageUrl,
+  },
 }
 ```
 
-### Exercise
-
-Add our `createReducer` helper to `src/utils.js` and use it in all our reducers (see categories example above).
-
-<details>
-  <summary>Solution</summary>
+...we might realize, that we can combine `getCategoriesData` and `getIdFromProps`, to get a single category object by its id!
 
 ```js
-// reducers/index.js
+export const getCategory = createSelector(
+  getCategoriesData,
+  getIdFromProps,
+  (categoriesData, id) => categoriesData[id],
+);
+```
+🎉
 
-const playlists = createReducer({}, {
-  [PLAYLISTS_FETCH_START]: (state, action) => {
-    ...state,
-    [action.categoryId]: {
-      ...state[action.categoryId],
-      status: STATUS_FETCHING,
-    },
-  },
-  [PLAYLISTS_FETCH_SUCCESS]: (state, action) => {
-    ...state,
-    [action.categoryId]: {
-      ...state[action.categoryId],
-      ...action.playlists,
-      status: STATUS_SUCCESS,
-    },
-  },
-  [PLAYLISTS_FETCH_FAILURE]: (state, action) => {
-    ...state,
-    [action.categoryId]: {
-      ...state[action.categoryId],
-      status: STATUS_FAILURE,
-    },
-  },
+Let's update our categories components using our new-found selectors:
+
+Before
+```js
+// CategoriesContainer.jsx
+
+const CategoriesContainer = ({ initFetch, categories }) => {
+  useEffect(() => {
+    initFetch();
+  }, [initFetch]);
+
+  return (
+    <Row gutter={[24, 24]}>
+      {categories.items ? categories.items.map(({ id, name, icons }) => (
+        <Col key={id} span={6} xs={14} sm={10} md={9} lg={6}>
+          <Category name={name} icon={icons[0]} id={id} />
+        </Col>
+      )) : <span>Loading...</span>}
+    </Row>
+  );
+};
+
+const mapStateToProps = (state) => ({
+  categories: state.categories,
 });
 
-const tracks = createReducer({}, {
-  [TRACKS_FETCH_START]: (state, action) => {
-    ...state,
-    [action.playlistId]: {
-      ...state[action.playlistId],
-      status: STATUS_FETCHING,
-    },
-  }
-  [TRACKS_FETCH_SUCCESS]: (state, action) => {
-    ...state,
-    [action.playlistId]: {
-      ...state[action.playlistId],
-      ...action.tracks,
-      status: STATUS_SUCCESS,
-    },
-  },
-  [TRACKS_FETCH_FAILURE]: (state, action) => {
-    ...state,
-    [action.playlistId]: {
-      ...state[action.playlistId],
-      status: STATUS_FAILURE,
-    },
+// Category.jsx
+
+const Category = ({
+  icon: { url },
+  name,
+  id,
+}) => (
+  ...
+);
+
+export default Category;
+```
+
+After
+```js
+// CategoriesContainer.jsx
+
+const CategoriesContainer = ({ initFetch, categoryIds }) => {
+  useEffect(() => {
+    initFetch();
+  }, [initFetch]);
+
+  return (
+    <Row gutter={[24, 24]}>
+      {categoryIds.map(id => (
+        <Col key={id} span={6} xs={14} sm={10} md={9} lg={6}>
+          <Category id={id} />
+        </Col>
+      ))}
+    </Row>
+  );
+};
+
+const mapStateToProps = state => ({
+  categoryIds: getCategoryIds(state), // mapping through array to preserve ordering
 });
 
+
+// Category.jsx
+
+const Category = ({
+  category: {
+    imageUrl,
+    name,
+  },
+  id,
+}) => (
+  ...
+);
+
+const mapStateToProps = (state, { id }) => ({
+  category: getCategory(state, { id }),
+});
+
+export default connect(
+  mapStateToProps,
+)(Category);
+```
+
+You can see that `Category.jsx` became a "smart" component because we connected it to the Redux store. One can argue that it's a change for the worse since we lost separation of concerns between UI and data. However we get the benefit of mapping only through ids in the parent component, which is faster and more readable. Additionally you can separate `connect` and `Category` component from `Category.jsx`, so you could use just UI somewhere else.
+
+Anyway, it's time to exercise again!
+
+### Exercise
+
+Try creating selectors for playlists and using them in `PlaylistsContainer.jsx` and `Playlist.jsx`.
+
+_Hint_
+
+We're nesting playlists under selected category id, so we should additionally get only the subset we need:
+```js
+const getCategoryPlaylists = createSelector(
+  (state, props) => props.categoryId,
+  getPlaylists,
+  (categoryId, playlists) => playlists[categoryId],
+);
+```
+
+--------------------
+
+<details>
+  <summary>Solution for playlists</summary>
+  
+```js
+// selectors/index.js
+
+export const getPlaylistIds = createSelector(
+  getCategoryPlaylists,
+  playlists => playlists.ids,
+);
+
+export const getPlaylistsData = createSelector(
+  getCategoryPlaylists,
+  playlists => playlists.data,
+);
+
+export const getPlaylist = createSelector(
+  getPlaylistsData,
+  getIdFromProps,
+  (playlistsData, id) => playlistsData[id],
+);
+
+// PlaylistsContainer.jsx
+
+const PlaylistsContainer = ({ playlistIds, initFetch, categoryId }) => {
+  useEffect(() => {
+    initFetch(categoryId);
+  }, [initFetch, categoryId]);
+
+  return (
+    <Row gutter={[24, 24]}>
+      {playlistIds.map(id => (
+        <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
+          <Playlist
+            id={id}
+            categoryId={categoryId}
+          />
+        </Col>
+      ))}
+    </Row>
+  );
+};
+
+const mapStateToProps = (state, props) => ({
+  playlistIds: getCategoryPlaylistIds(state, props),
+  categoryId: props.match.params.categoryId,
+});
 ```
 </details>
+
+Tracks part is fairly similar to playlists, try doing it yourself and then check out the solution in `lesson-2-solution` branch.

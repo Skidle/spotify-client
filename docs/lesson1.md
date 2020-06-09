@@ -246,7 +246,6 @@ playlists: {
     initFetch: categoryId => fetchPlaylists(dispatch, categoryId),
   });
   ```
-  
 </details>
 
 Tracks part is very similar to playlists, try doing it yourself and then check out the solution in `lesson-1-solution` branch.
