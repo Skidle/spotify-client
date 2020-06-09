@@ -2,7 +2,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Run `yarn start` to start the app.
 
-An example Redux app for [React Girls](https://www.reactgirls.com/) webinar. Latest version is in `/master`, branches `version-1`, `version-2`, `version-3` present 3-part refactoring. 
+An example Redux app for [React Girls](https://www.reactgirls.com/) webinar. Latest version is in `/master`, branches `lesson-1`, `lesson-2` present 2-part refactoring. You can check `/docs` for lessons with exercises.
 
 You need to create a Spotify account to login (the app doesn't gather user data). If you'd like to use the app for one of your projects, you need to change `CLIENT_ID` and `REDIRECT_URI` as per [Spotify guide](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app).
 

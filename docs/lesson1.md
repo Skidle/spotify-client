@@ -249,4 +249,4 @@ playlists: {
   
 </details>
 
-Tracks part is be very similar to playlists, check out solution in `version-1-solution` branch.
+Tracks part is very similar to playlists, try doing it yourself and then check out the solution in `lesson-1-solution` branch.

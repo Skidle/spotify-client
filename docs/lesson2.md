@@ -1,15 +1,8 @@
-## Lesson 2
+## Lesson 2 - refactoring
 
 ### Refactoring
 
-Let's go through some good practices that we have already in our app:
-- Components are separated into stateful and presentational
-- We handle API calls in actions
-- Actions and reducers are separated by type of entity
-
-We can do better!
-
-Let's look at our state first
+Our application works but we don't really follow best practices in the code, which might lead to poor performance and readability, harder debugging, and other problems in the future. We can also view this refactoring as an opportunity to learn something new. Let's start by looking at our current state.
 
 ### State normalization
 
@@ -411,11 +404,16 @@ Let's look at our state first
   
 </details>
 
-It's pretty big for a simple app with 3 entities, we probably need only 1/3 of it. We can filter only data that we need and most importantly we can organize (normalize) it, to make state as flat as possible.
-We normalize data by dividing them into entities and keying them by id. If ordering is important, then we store an array of just the ids separately. See [documentation](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) for details.
+It's pretty big for a simple app with 3 entities, we probably need only 1/3 of it. We can filter only the data that we need and most importantly we can organize (normalize) it, to make state as flat as possible.
 
-What if the state had this structure instead?
-```
+We can normalize this data by dividing it into entities and keying it by id. If ordering is important, then we store an array of just the ids separately. See [documentation](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) for details.
+
+Let's apply this to our state:
+
+<details>
+  <summary>Normalized state</summary>
+
+```js
 {
   categories: {
     data: {
@@ -474,10 +472,187 @@ What if the state had this structure instead?
   }
 }
 ```
+</details>
 
-Let's make it happen:
+To make it happen we need to clean up data either in reducers or in actions. In this tutorial we're going to transform data in actions. Since we get data as array of items, we can use [reduce method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce), which can apply a function to an each element in the array.
 
-TBA STEPS
+Let's look at how we can trasform categories using reduce:
+```js
+// shape of categories that we get from the API
+const categories = {
+  href: 'https://api.spotify.com/v1/browse/categories?country=CZ&offset=0&limit=10',
+  items: [
+    {
+      href: 'https://api.spotify.com/v1/browse/categories/toplists',
+      icons: [
+        {
+          height: 275,
+          url: 'https://t.scdn.co/media/derived/toplists_11160599e6a04ac5d6f2757f5511778f_0_0_275_275.jpg',
+          width: 275
+        }
+      ],
+      id: 'toplists',
+      name: 'Top Lists'
+    },
+    {
+      href: 'https://api.spotify.com/v1/browse/categories/pop',
+      icons: [
+        {
+          height: 274,
+          url: 'https://t.scdn.co/media/derived/pop-274x274_447148649685019f5e2a03a39e78ba52_0_0_274_274.jpg',
+          width: 274
+        }
+      ],
+      id: 'pop',
+      name: 'Pop'
+    },
+  ],
+  limit: 10,
+  next: 'https://api.spotify.com/v1/browse/categories?country=CZ&offset=10&limit=10',
+  offset: 0,
+  previous: null,
+  total: 37
+};
+
+const transformCategories = data => {
+  // We only need items array
+
+  const { items } = data;
+
+  const categoryItems = items.reduce((acc, item) => {
+    const { id, name, icons } = item; // pick only props that we need to display
+
+    // add object key to our accumulated object
+    acc[id] = {
+      id,
+      name,
+      imageUrl: icons[0].url, // we only need 1 image
+    }
+    
+    return acc;
+  }, {}); // we expect an object to be returned
+
+  const ids = items.map(item => item.id); // array of ids to preserve ordering
+
+  return {
+    data: categoryItems,
+    ids,
+  }
+};
+```
+
+First iteration of reduce method being called on items gives us this:
+```js
+{
+  toplists: {
+    id: 'toplists',
+    name: 'Top Lists',
+    imageUrl: 'https://t.scdn.co/media/derived/toplists_11160599e6a04ac5d6f2757f5511778f_0_0_275_275.jpg'
+  },
+}
+```
+Each subsequent iteration appends another keyed object to the result, until the end of items array. Finally we'll get an object of objects with as many children as there are elements in the input array.
+
+We also map category ids to a separate array to preserve ordering. Result of calling `transformCategories` on input data looks like:
+```js
+{
+  data: {
+    toplists: {
+      id: 'toplists',
+      name: 'Top Lists',
+      imageUrl: 'https://t.scdn.co/media/derived/toplists_11160599e6a04ac5d6f2757f5511778f_0_0_275_275.jpg'
+    },
+    pop: {
+      id: 'pop',
+      name: 'Pop',
+      imageUrl: 'https://t.scdn.co/media/derived/pop-274x274_447148649685019f5e2a03a39e78ba52_0_0_274_274.jpg'
+    },
+  },
+  ids: [
+    'toplists',
+    'pop',
+  ],
+}
+```
+
+Now we just need to place `transformCategories` function in `src/utils` and use it in `fetchCategories` action:
+```js
+export const fetchCategories = (dispatch) => {
+  sendRequest(GET_CATEGORIES)
+    .then((response) => response.json())
+    .then(({ categories }) => {
+      const transformedCategories = transformCategories(categories);
+
+      return dispatch({ type: CATEGORIES_FETCH, categories: transformedCategories });
+    });
+};
+```
+
+### Exercise
+
+Try following the same steps for Playlists: you need to create a `transformPlaylists` function, using reduce method. The function should return:
+```js
+{
+  data: {
+    'playlist_id1': {
+      id,
+      name,
+      description,
+      imageUrl,
+    },
+  },
+  ids: [
+    'playlist_id1',
+  ]
+}
+```
+
+--------------------
+
+<details>
+  <summary>Solution for playlists</summary>
+  
+```js
+// src/utils.js
+
+const transformPlaylists = ({ items }) => {
+  const playlistItems = items.reduce((acc, item) => {
+    const { id, name, images, description } = item;
+
+    acc[id] = {
+      id,
+      name,
+      description,
+      imageUrl: images[0].url,
+    }
+
+    return acc;
+  }, {});
+
+  const ids = items.map(item => item.id);
+
+  return {
+    data: playlistItems,
+    ids,
+  }
+};
+
+// actions/index.js
+export const fetchPlaylists = (dispatch, categoryId) => {
+  sendRequest(getCategoryPlaylistsUrl(categoryId))
+    .then((response) => response.json())
+    .then(({ playlists }) => {
+      const transformedPlaylists = transformPlaylists(playlists);
+
+      dispatch({ type: PLAYLISTS_FETCH, playlists: transformedPlaylists, categoryId })
+    });
+};
+
+```
+  
+</details>
+
+Tracks part is similar to the other entities, try doing it yourself and then check out the solution in `lesson-2-solution` branch.
 
 -----------
 
@@ -573,3 +748,65 @@ function createReducer(initialState, handlers) {
   }
 }
 ```
+
+### Exercise
+
+Add our `createReducer` helper to `src/utils.js` and use it in all our reducers (see categories example above).
+
+<details>
+  <summary>Solution</summary>
+
+```js
+// reducers/index.js
+
+const playlists = createReducer({}, {
+  [PLAYLISTS_FETCH_START]: (state, action) => {
+    ...state,
+    [action.categoryId]: {
+      ...state[action.categoryId],
+      status: STATUS_FETCHING,
+    },
+  },
+  [PLAYLISTS_FETCH_SUCCESS]: (state, action) => {
+    ...state,
+    [action.categoryId]: {
+      ...state[action.categoryId],
+      ...action.playlists,
+      status: STATUS_SUCCESS,
+    },
+  },
+  [PLAYLISTS_FETCH_FAILURE]: (state, action) => {
+    ...state,
+    [action.categoryId]: {
+      ...state[action.categoryId],
+      status: STATUS_FAILURE,
+    },
+  },
+});
+
+const tracks = createReducer({}, {
+  [TRACKS_FETCH_START]: (state, action) => {
+    ...state,
+    [action.playlistId]: {
+      ...state[action.playlistId],
+      status: STATUS_FETCHING,
+    },
+  }
+  [TRACKS_FETCH_SUCCESS]: (state, action) => {
+    ...state,
+    [action.playlistId]: {
+      ...state[action.playlistId],
+      ...action.tracks,
+      status: STATUS_SUCCESS,
+    },
+  },
+  [TRACKS_FETCH_FAILURE]: (state, action) => {
+    ...state,
+    [action.playlistId]: {
+      ...state[action.playlistId],
+      status: STATUS_FAILURE,
+    },
+});
+
+```
+</details>
