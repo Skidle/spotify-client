@@ -1,9 +1,9 @@
-## Lesson 1
+## Lesson 2
 
 ### Refactoring
 
-Let's go through some good practices that we have already:
-- Separating components into stateful and presentational
+Let's go through some good practices that we have already in our app:
+- Components are separated into stateful and presentational
 - We handle API calls in actions
 - Actions and reducers are separated by type of entity
 
@@ -412,7 +412,7 @@ Let's look at our state first
 </details>
 
 It's pretty big for a simple app with 3 entities, we probably need only 1/3 of it. We can filter only data that we need and most importantly we can organize (normalize) it, to make state as flat as possible.
-We normalize data by dividing them into entities and keying them by id. If ordering is important, then we store an array of just the ids separately.
+We normalize data by dividing them into entities and keying them by id. If ordering is important, then we store an array of just the ids separately. See [documentation](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) for details.
 
 What if the state had this structure instead?
 ```
@@ -483,7 +483,8 @@ TBA STEPS
 
 ### Selectors
 
-Selectors have knowledge of the whereabouts or path to find a particular subset of data and return with the requested subset of data. 
+[Selectors](https://redux.js.org/recipes/computing-derived-data) are functions that know a path to a particular subset of the state and then return derived data from it. 
+
 We normalized the store, so that it has only relevant data with minimal levels of nesting. Now we can move the logic to compute derived data to selectors, this will cut down on repetition. We're also going to use [Reselect library](https://github.com/reduxjs/reselect), that has implemented caching for selectors.
 
 TBA steps
@@ -496,5 +497,79 @@ We're using asynchronous API (it can return results with delay or not give us an
 
 E.g. if we don't have any categories in the store, we just show `Loading...`, but API request may have failed completely and we should show the error to the user and a possible exit out of this Error state.
 
+Also if you load the app, open one of the playlists, then click on the logo to go back, and open Redux dev tools, you can see that we've just fetched categories twice (even though these are identical data). It might not be that visible for a small app and when you have decent Internet connection, but it's still a problem worth solving. 
 
 TBA steps
+
+---------------------
+
+### Generating reducers
+
+Last but not least we're going to reduce the boilerplate code for creating reducers (pun not intended). 
+
+We can turn this:
+
+```js
+const initialEntitiesState = {
+  data: {},
+  ids: [],
+  status: '',
+};
+
+const categories = (state = initialEntitiesState, action) => {
+  switch (action.type) {
+    case CATEGORIES_FETCH_START:
+      return {
+        ...state,
+        status: STATUS_FETCHING,
+      };
+    case CATEGORIES_FETCH_SUCCESS:
+      return {
+        ...state,
+        ...action.categories,
+        status: STATUS_SUCCESS,
+      };
+    case CATEGORIES_FETCH_FAILURE:
+      return {
+        ...state,
+        status: STATUS_FAILURE,
+      };
+    default:
+      return state;
+  }
+};
+```
+
+into this slightly shorter and more readable version:
+
+```js
+const categories = createReducer(initialEntitiesState, {
+  [CATEGORIES_FETCH_START]: (state, action) => {
+    ...state,
+    status: STATUS_FETCHING,
+  },
+  [CATEGORIES_FETCH_SUCCESS]: (state, action) => {
+    ...state,
+    ...action.categories,
+    status: STATUS_SUCCESS,
+  },
+  [CATEGORIES_FETCH_FAILURE]: (state, action) => {
+    ...state,
+    status: STATUS_FAILURE,
+  },
+});
+```
+
+This is possible thanks to `createReducer` [helper](https://redux.js.org/recipes/reducing-boilerplate#generating-reducers):
+
+```js
+function createReducer(initialState, handlers) {
+  return function reducer(state = initialState, action) {
+    if (handlers.hasOwnProperty(action.type)) {
+      return handlers[action.type](state, action)
+    } else {
+      return state
+    }
+  }
+}
+```
