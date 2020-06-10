@@ -41,25 +41,29 @@ We use [React Router](https://reacttraining.com/react-router/web/guides/quick-st
 ----------
 ### Let's add Redux!
 
-Install `redux` , `react-redux` libraries and developer tools:
+Install `redux`, `react-redux`, `redux-thunk` libraries and developer tools:
 
     yarn add redux
     yarn add react-redux
+    yarn add redux-thunk
     yarn add redux-devtools --dev
 
-Let's create a Redux store first, add `store.js` file to `src/` folder with the following content:
+Let's create a Redux store first, add `store.js` file to `src/` folder with the following [content](https://github.com/zalmoxisus/redux-devtools-extension#12-advanced-store-setup):
 
 ```js
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk'; // allows us to have actions as functions
 
-/* eslint-disable no-underscore-dangle */
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
-  state => state, // fake reducer, by default returns previous state
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), // redux dev tools
+  state => state, // fake reducer
+  composeEnhancers(
+    applyMiddleware(thunk),
+  ),
 );
-/* eslint-enable */
 
-export  default  store;
+export default store;
 ```
 
 The store is created, now we need to provide it to the app, so in `src/index.jsx` we add `Provider` to the topmost level:
@@ -109,15 +113,18 @@ export default combineReducers({
 We used Redux's `combineReducers` utility for convenience, it calls reducers with the slices of state selected according to their keys, and combines their results into a single object again. And now we can use this new reducer in `store.js` instead of our faked one:
 
 ```js
-import { createStore } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 import reducer from './reducers';
 
-/* eslint-disable no-underscore-dangle */
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
   reducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), // redux dev tools
+  composeEnhancers(
+    applyMiddleware(thunk),
+  ),
 );
-/* eslint-enable */
 
 export default store;
 ```
@@ -129,7 +136,7 @@ Create `src/actions/` folder and add `index.js` file with following:
 import { GET_CATEGORIES } from  '../constants';
 import { sendRequest } from '../utils'; 
 
-export const fetchCategories = dispatch => {
+export const fetchCategories = () => dispatch => {
   sendRequest(GET_CATEGORIES) // fetching data from categories endpoint
     .then(response => response.json())
     .then(({ categories }) => dispatch({ type: 'CATEGORIES_FETCH', categories })); // dispatching action to store categories
@@ -147,7 +154,7 @@ import { connect } from 'react-redux';
 import { fetchCategories } from '../actions';
 
 const mapDispatchToProps = dispatch => ({
-  initFetch: () => fetchCategories(dispatch),
+  initFetch: () => dispatch(fetchCategories()),
 });
 
 const mapStateToProps = state => ({
@@ -227,7 +234,7 @@ playlists: {
   ```js
   // actions/index.js
 
-  export const fetchPlaylists = (dispatch, categoryId) => {
+  export const fetchPlaylists = categoryId => dispatch => {
     sendRequest(getCategoryPlaylistsUrl(categoryId))
       .then((response) => response.json())
       .then(({ playlists }) => dispatch({ type: 'PLAYLISTS_FETCH', playlists, categoryId }));
@@ -243,7 +250,7 @@ playlists: {
   });
 
   const mapDispatchToProps = dispatch => ({
-    initFetch: categoryId => fetchPlaylists(dispatch, categoryId),
+    initFetch: categoryId => dispatch(fetchPlaylists(categoryId)),
   });
   ```
 </details>
