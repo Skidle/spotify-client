@@ -3,33 +3,34 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
 import Playlist from '../components/Playlist';
 import { fetchPlaylists } from '../actions';
+import { getPlaylistIds, getRouteCategoryId } from '../selectors';
 
-const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
+const PlaylistsContainer = ({ playlistIds, initFetch, categoryId }) => {
   useEffect(() => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
 
+  if (!playlistIds) {
+    return <span>Loading...</span>;
+  }
+
   return (
     <Row gutter={[24, 24]}>
-      {playlists[categoryId]
-        ? playlists[categoryId].items.map(({ id, name, description, images }) => (
-          <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
-            <Playlist
-              name={name}
-              image={images[0]}
-              id={id}
-              description={description}
-            />
-          </Col>
-        ))
-        : <span>Loading...</span>}
+      {playlistIds.map(id => (
+        <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
+          <Playlist
+            id={id}
+            categoryId={categoryId}
+          />
+        </Col>
+      ))}
     </Row>
   );
 };
 
 const mapStateToProps = (state, props) => ({
-  playlists: state.playlists,
-  categoryId: props.match.params.categoryId,
+  playlistIds: getPlaylistIds(state, props),
+  categoryId: getRouteCategoryId(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({

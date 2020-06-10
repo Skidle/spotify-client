@@ -3,26 +3,29 @@ import { connect } from 'react-redux';
 import { List } from 'antd';
 import Track from '../components/Track';
 import { fetchTracks } from '../actions';
+import { getTrackIds, getRoutePlaylistId } from '../selectors';
 
-const TracksContainer = ({ tracks, initFetch, playlistId }) => {
+const TracksContainer = ({ trackIds, initFetch, playlistId }) => {
   useEffect(() => {
     initFetch(playlistId);
   }, [initFetch, playlistId]);
 
+  if (!trackIds) {
+    return <span>Loading...</span>;
+  }
+
   return (
     <List>
-      {tracks[playlistId]
-        ? Object.entries(tracks[playlistId]).map(([, { track }]) => (
-          <Track key={track.id} {...track} />
-        ))
-        : <span>Loading...</span>}
+      {trackIds.map(id => (
+        <Track key={id} id={id} playlistId={playlistId} />
+      ))}
     </List>
   );
 };
 
 const mapStateToProps = (state, props) => ({
-  tracks: state.tracks,
-  playlistId: props.match.params.playlistId,
+  trackIds: getTrackIds(state, props),
+  playlistId: getRoutePlaylistId(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({

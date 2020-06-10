@@ -40,3 +40,79 @@ export const sendRequest = url => {
       return response;
     });
 };
+
+export const transformCategories = ({ items }) => {
+  const categoryItems = items.reduce((acc, item) => {
+    const { id, name, icons } = item;
+
+    acc[id] = {
+      id,
+      name,
+      imageUrl: icons[0].url,
+    };
+
+    return acc;
+  }, {});
+
+  const ids = items.map(item => item.id);
+
+  return {
+    data: categoryItems,
+    ids,
+  };
+};
+
+export const transformPlaylists = ({ items }) => {
+  const playlistItems = items.reduce((acc, item) => {
+    const { id, name, images, description } = item;
+
+    acc[id] = {
+      id,
+      name,
+      description,
+      imageUrl: images[0].url,
+    };
+
+    return acc;
+  }, {});
+
+  const ids = items.map(item => item.id);
+
+  return {
+    data: playlistItems,
+    ids,
+  };
+};
+
+export const transformTracks = items => {
+  const trackItems = items.reduce((acc, { track }) => {
+    const {
+      id,
+      name,
+      description,
+      artists,
+      popularity,
+      preview_url: previewUrl,
+      album: { images },
+    } = track;
+
+    acc[id] = {
+      id,
+      name,
+      description,
+      imageUrl: images[0].url,
+      artistNames: artists.map(({ name: artistName }) => artistName),
+      popularity,
+      previewUrl,
+    };
+
+    return acc;
+  }, {});
+
+  const ids = items.map(({ track }) => track.id);
+
+  return {
+    data: trackItems,
+    ids,
+  };
+};
