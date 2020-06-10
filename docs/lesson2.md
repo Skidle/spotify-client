@@ -574,7 +574,7 @@ We also map category ids to a separate array to preserve ordering. Result of cal
 
 Now we just need to place `transformCategories` function in `src/utils` and use it in `fetchCategories` action:
 ```js
-export const fetchCategories = (dispatch) => {
+export const fetchCategories = () => dispatch => {
   sendRequest(GET_CATEGORIES)
     .then((response) => response.json())
     .then(({ categories }) => {
@@ -635,13 +635,13 @@ const transformPlaylists = ({ items }) => {
 
 // actions/index.js
 
-export const fetchPlaylists = (dispatch, categoryId) => {
+export const fetchPlaylists = categoryId => dispatch => {
   sendRequest(getCategoryPlaylistsUrl(categoryId))
     .then((response) => response.json())
     .then(({ playlists }) => {
       const transformedPlaylists = transformPlaylists(playlists);
 
-      dispatch({ type: PLAYLISTS_FETCH, playlists: transformedPlaylists, categoryId })
+      return dispatch({ type: PLAYLISTS_FETCH, playlists: transformedPlaylists, categoryId })
     });
 };
 ```
@@ -776,6 +776,10 @@ const CategoriesContainer = ({ initFetch, categoryIds }) => {
     initFetch();
   }, [initFetch]);
 
+  if (!categoryIds) {
+    return <span>Loading...</span>;
+  }
+
   return (
     <Row gutter={[24, 24]}>
       {categoryIds.map(id => (
@@ -863,6 +867,10 @@ const PlaylistsContainer = ({ playlistIds, initFetch, categoryId }) => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
 
+  if (!playlistIds) {
+    return <span>Loading...</span>;
+  }
+
   return (
     <Row gutter={[24, 24]}>
       {playlistIds.map(id => (
@@ -879,7 +887,7 @@ const PlaylistsContainer = ({ playlistIds, initFetch, categoryId }) => {
 
 const mapStateToProps = (state, props) => ({
   playlistIds: getCategoryPlaylistIds(state, props),
-  categoryId: props.match.params.categoryId,
+  categoryId: getRouteCategoryId(state, props),
 });
 ```
 </details>
