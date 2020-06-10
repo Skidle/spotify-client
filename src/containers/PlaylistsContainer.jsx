@@ -18,7 +18,6 @@ const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
               name={name}
               image={images[0]}
               id={id}
-              categoryId={categoryId}
               description={description}
             />
           </Col>

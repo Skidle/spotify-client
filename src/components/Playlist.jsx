@@ -9,9 +9,8 @@ const Playlist = ({
   name,
   description,
   id,
-  categoryId,
 }) => (
-  <Link to={`/${categoryId}/${id}`}>
+  <Link to={`/playlist=${id}`}>
     <Card
       hoverable
       style={{ width: '250px' }}

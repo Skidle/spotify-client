@@ -27,10 +27,10 @@
       "airbnb"
     ],
     "rules": {
-      "linebreak-style": [
+      "import/prefer-default-export": [
         "off"
       ],
-      "import/prefer-default-export": [
+      "linebreak-style": [
         "off"
       ],
       "react/prop-types": [

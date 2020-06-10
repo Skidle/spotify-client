@@ -13,8 +13,8 @@ function App() {
     <Router>
       <Switch>
         <RouteWithLayout path="/" exact component={CategoriesContainer} />
-        <RouteWithLayout path="/:categoryId" exact component={PlaylistsContainer} />
-        <RouteWithLayout path="/:categoryId/:playlistId" component={TracksContainer} />
+        <RouteWithLayout path="/category=:categoryId" exact component={PlaylistsContainer} />
+        <RouteWithLayout path="/playlist=:playlistId" exact component={TracksContainer} />
       </Switch>
     </Router>
   );
