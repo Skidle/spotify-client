@@ -3,25 +3,30 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
 import Category from '../components/Category';
 import { fetchCategories } from '../actions';
+import { getCategoryIds } from '../selectors';
 
-const CategoriesContainer = ({ initFetch, categories }) => {
+const CategoriesContainer = ({ initFetch, categoryIds }) => {
   useEffect(() => {
     initFetch();
   }, [initFetch]);
 
+  if (!categoryIds) {
+    return <span>Loading...</span>;
+  }
+
   return (
     <Row gutter={[24, 24]}>
-      {categories.items ? categories.items.map(({ id, name, icons }) => (
+      {categoryIds.map(id => (
         <Col key={id} span={6} xs={14} sm={10} md={9} lg={6}>
-          <Category name={name} icon={icons[0]} id={id} />
+          <Category id={id} />
         </Col>
-      )) : <span>Loading...</span>}
+      ))}
     </Row>
   );
 };
 
 const mapStateToProps = state => ({
-  categories: state.categories,
+  categoryIds: getCategoryIds(state),
 });
 
 const mapDispatchToProps = dispatch => ({
