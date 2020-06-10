@@ -3,10 +3,10 @@ import {
   BrowserRouter as Router,
   Switch,
 } from 'react-router-dom';
-import RouteWithLayout from './containers/RouteWithLayout';
+import RouteWithLayout from './layout/RouteWithLayout';
 import CategoriesContainer from './containers/CategoriesContainer';
 import PlaylistsContainer from './containers/PlaylistsContainer';
-import PlaylistTracksContainer from './containers/PlaylistTracksContainer';
+import TracksContainer from './containers/TracksContainer';
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
       <Switch>
         <RouteWithLayout path="/" exact component={CategoriesContainer} />
         <RouteWithLayout path="/category=:categoryId" exact component={PlaylistsContainer} />
-        <RouteWithLayout path="/playlist=:playlistId" exact component={PlaylistTracksContainer} />
+        <RouteWithLayout path="/playlist=:playlistId" exact component={TracksContainer} />
       </Switch>
     </Router>
   );

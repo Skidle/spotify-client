@@ -10,11 +10,8 @@
     "eslint-config-airbnb": "^18.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "redux": "^4.0.5",
-    "reselect": "^4.0.0",
     "urijs": "^1.19.2"
   },
   "scripts": {
@@ -49,7 +46,10 @@
           "consistent": true
         }
       ],
-      "arrow-parens": ["error", "as-needed"]
+      "arrow-parens": [
+        "error",
+        "as-needed"
+      ]
     }
   },
   "browserslist": {
@@ -63,8 +63,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "redux-devtools": "^3.5.0"
   }
 }

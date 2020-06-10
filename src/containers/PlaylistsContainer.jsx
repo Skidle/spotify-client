@@ -1,50 +1,36 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import { Row, Col } from 'antd';
-import { fetchPlaylists } from '../actions';
-import { getRoutePlaylistIds, getRouteCategoryId, getPlaylistsStatus } from '../selectors';
-import { STATUS_FETCHING, STATUS_FAILURE } from '../constants';
+import { noop } from '../utils';
 import Playlist from '../components/Playlist';
+import { playlists as DUMMY_PLAYLISTS } from '../dummy.json';
 
-const PlaylistsContainer = ({ playlistIds, initFetch, categoryId, status }) => {
+const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
   useEffect(() => {
     initFetch(categoryId);
   }, [initFetch, categoryId]);
 
-  if (status === STATUS_FETCHING) {
-    return <span>Loading...</span>;
-  }
-
-  if (status === STATUS_FAILURE) {
-    return <span>Error</span>;
-  }
-
   return (
     <Row gutter={[24, 24]}>
-      {playlistIds.map(id => (
-        <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
-          <Playlist
-            id={id}
-            categoryId={categoryId}
-          />
-        </Col>
-      ))}
+      {playlists[categoryId]
+        ? playlists[categoryId].items.map(({ id, name, description, images }) => (
+          <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
+            <Playlist
+              name={name}
+              image={images[0]}
+              id={id}
+              description={description}
+            />
+          </Col>
+        ))
+        : <span>Loading...</span>}
     </Row>
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  playlistIds: getRoutePlaylistIds,
-  categoryId: getRouteCategoryId,
-  status: getPlaylistsStatus,
-});
+PlaylistsContainer.defaultProps = {
+  initFetch: noop,
+  playlists: DUMMY_PLAYLISTS,
+  categoryId: 'pop',
+};
 
-const mapDispatchToProps = dispatch => ({
-  initFetch: categoryId => fetchPlaylists(dispatch, categoryId),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(PlaylistsContainer);
+export default PlaylistsContainer;

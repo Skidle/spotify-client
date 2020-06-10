@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
+import Layout from './Layout';
 import { authorizeUser } from '../utils';
-import Layout from '../components/Layout';
 
 const RouteWithLayout = ({ init, component: Component, ...other }) => {
   useEffect(() => {
