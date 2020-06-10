@@ -16,13 +16,18 @@ const getCategoriesData = createSelector(
 
 export const getCategoryIds = createSelector(
   getCategories,
-  categories => categories.ids,
+  categories => categories.ids || [],
 );
 
 export const getCategory = createSelector(
   getCategoriesData,
   getIdFromProps,
   (categoriesData, id) => categoriesData[id],
+);
+
+export const getCategoriesStatus = createSelector(
+  getCategories,
+  categories => categories.status,
 );
 
 const getPlaylists = state => state.playlists;
@@ -46,7 +51,12 @@ const getRouteCategoryPlaylists = createSelector(
 
 export const getPlaylistIds = createSelector(
   getRouteCategoryPlaylists,
-  playlists => playlists.ids,
+  playlists => playlists.ids || [],
+);
+
+export const getPlaylistsStatus = createSelector(
+  getRouteCategoryPlaylists,
+  playlists => playlists.status,
 );
 
 export const getPlaylist = createSelector(
@@ -76,11 +86,16 @@ const getRoutePlaylistTracks = createSelector(
 
 export const getTrackIds = createSelector(
   getRoutePlaylistTracks,
-  tracks => tracks.ids,
+  tracks => tracks.ids || [],
 );
 
 export const getTrack = createSelector(
   getTracksData,
   getIdFromProps,
   (tracksData, id) => tracksData[id],
+);
+
+export const getTracksStatus = createSelector(
+  getRoutePlaylistTracks,
+  tracks => tracks.status,
 );

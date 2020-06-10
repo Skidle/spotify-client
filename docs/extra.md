@@ -93,7 +93,7 @@ export const getCategoriesStatus = createSelector(
 
 // CategoriesContainer.jsx
 
-import { Spin } from 'antd';
+import { Spin, Empty, Button } from 'antd';
 
 const CategoriesContainer = ({ initFetch, categoryIds, status }) => {
   useEffect(() => {
