@@ -43,6 +43,7 @@
       "react/jsx-props-no-spreading": [
         "off"
       ],
+      "no-prototype-builtins": ["off"],
       "object-curly-newline": [
         "error",
         {
