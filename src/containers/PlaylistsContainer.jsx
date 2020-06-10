@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
-import { noop } from '../utils';
 import Playlist from '../components/Playlist';
-import { playlists as DUMMY_PLAYLISTS } from '../dummy.json';
+import { fetchPlaylists } from '../actions';
 
 const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
   useEffect(() => {
@@ -27,10 +27,16 @@ const PlaylistsContainer = ({ playlists, initFetch, categoryId }) => {
   );
 };
 
-PlaylistsContainer.defaultProps = {
-  initFetch: noop,
-  playlists: DUMMY_PLAYLISTS,
-  categoryId: 'pop',
-};
+const mapStateToProps = (state, props) => ({
+  playlists: state.playlists,
+  categoryId: props.match.params.categoryId,
+});
 
-export default PlaylistsContainer;
+const mapDispatchToProps = dispatch => ({
+  initFetch: categoryId => dispatch(fetchPlaylists(categoryId)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PlaylistsContainer);

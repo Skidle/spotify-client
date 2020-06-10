@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Row, Col } from 'antd';
 import Category from '../components/Category';
-import { noop } from '../utils';
-import { categories as DUMMY_CATEGORIES } from '../dummy.json';
+import { fetchCategories } from '../actions';
 
 const CategoriesContainer = ({ initFetch, categories }) => {
   useEffect(() => {
@@ -20,9 +20,15 @@ const CategoriesContainer = ({ initFetch, categories }) => {
   );
 };
 
-CategoriesContainer.defaultProps = {
-  initFetch: noop,
-  categories: DUMMY_CATEGORIES,
-};
+const mapStateToProps = state => ({
+  categories: state.categories,
+});
 
-export default CategoriesContainer;
+const mapDispatchToProps = dispatch => ({
+  initFetch: () => dispatch(fetchCategories()),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CategoriesContainer);

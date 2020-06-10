@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { List } from 'antd';
-import { noop } from '../utils';
 import Track from '../components/Track';
-import { tracks as DUMMY_TRACKS } from '../dummy.json';
+import { fetchTracks } from '../actions';
 
 const TracksContainer = ({ tracks, initFetch, playlistId }) => {
   useEffect(() => {
@@ -20,10 +20,16 @@ const TracksContainer = ({ tracks, initFetch, playlistId }) => {
   );
 };
 
-TracksContainer.defaultProps = {
-  initFetch: noop,
-  tracks: DUMMY_TRACKS,
-  playlistId: '37i9dQZF1DX1kQODfnjf4u',
-};
+const mapStateToProps = (state, props) => ({
+  tracks: state.tracks,
+  playlistId: props.match.params.playlistId,
+});
 
-export default TracksContainer;
+const mapDispatchToProps = dispatch => ({
+  initFetch: playlistId => dispatch(fetchTracks(playlistId)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(TracksContainer);

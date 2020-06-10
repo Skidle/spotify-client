@@ -1,8 +1,6 @@
 import URI from 'urijs';
 import { SPOTIFY_API, ACCESS_TOKEN_STORAGE_KEY, AUTHORIZE_URL } from './constants';
 
-export const noop = () => {};
-
 export const getCategoryPlaylistsUrl = categoryId => `${SPOTIFY_API}browse/categories/${categoryId}/playlists?limit=10`;
 export const getPlaylistTracksUrl = playlistId => `${SPOTIFY_API}playlists/${playlistId}/tracks?limit=10`;
 
