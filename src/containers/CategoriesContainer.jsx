@@ -20,12 +20,12 @@ const CategoriesContainer = ({ initFetch, categories }) => {
   );
 };
 
-const mapDispatchToProps = dispatch => ({
-  initFetch: () => fetchCategories(dispatch),
-});
-
 const mapStateToProps = state => ({
   categories: state.categories,
+});
+
+const mapDispatchToProps = dispatch => ({
+  initFetch: () => dispatch(fetchCategories()),
 });
 
 export default connect(

@@ -26,7 +26,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  initFetch: playlistId => fetchTracks(dispatch, playlistId),
+  initFetch: playlistId => dispatch(fetchTracks(playlistId)),
 });
 
 export default connect(
