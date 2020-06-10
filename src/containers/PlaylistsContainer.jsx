@@ -29,9 +29,9 @@ const PlaylistsContainer = ({ playlistIds, initFetch, categoryId, status }) => {
   }
 
   return (
-    <Row gutter={[24, 24]}>
+    <Row gutter={[32, 32]} justify="center">
       {playlistIds.map(id => (
-        <Col key={id} span={6} xs={14} sm={12} md={9} lg={6}>
+        <Col key={id} style={{ maxWidth: '300px' }}>
           <Playlist
             id={id}
             categoryId={categoryId}

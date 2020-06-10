@@ -16,7 +16,7 @@ const Category = ({
   <Link to={`/category=${id}`}>
     <Card
       hoverable
-      style={{ width: '250px' }}
+      style={{ minWidth: '200px' }}
       cover={<img alt="Category" src={imageUrl} />}
     >
       <Meta title={name} />

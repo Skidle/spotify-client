@@ -29,7 +29,7 @@ const TracksContainer = ({ trackIds, initFetch, playlistId, status }) => {
   }
 
   return (
-    <List>
+    <List size="large">
       {trackIds.map(id => (
         <Track key={id} id={id} playlistId={playlistId} />
       ))}

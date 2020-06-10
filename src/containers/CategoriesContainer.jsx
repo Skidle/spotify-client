@@ -29,9 +29,9 @@ const CategoriesContainer = ({ initFetch, categoryIds, status }) => {
   }
 
   return (
-    <Row gutter={[24, 24]}>
+    <Row gutter={[32, 32]} justify="center">
       {categoryIds.map(id => (
-        <Col key={id} span={6} xs={14} sm={10} md={9} lg={6}>
+        <Col key={id} style={{ maxWidth: '300px' }}>
           <Category id={id} />
         </Col>
       ))}

@@ -1,10 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { List, Avatar, Rate, Card } from 'antd';
+import { List, Avatar, Card, Statistic } from 'antd';
 import { getTrack } from '../selectors';
-
-// eslint-disable-next-line no-mixed-operators
-const getRate = popularity => popularity * 5 / 100;
 
 const Track = ({
   track: {
@@ -17,7 +14,7 @@ const Track = ({
 }) => (
   <Card size="small">
     <List.Item
-      actions={[<Rate style={{ fontSize: 20, marginBottom: '9px' }} defaultValue={getRate(popularity)} disabled allowHalf />]}
+      actions={[<Statistic title="Popularity" value={popularity} suffix="%" style={{ cursor: 'initial' }} />]}
     >
       <List.Item.Meta
         avatar={<Avatar shape="square" size={48} src={imageUrl} />}

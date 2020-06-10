@@ -17,7 +17,7 @@ const Playlist = ({
   <Link to={`/playlist=${id}`}>
     <Card
       hoverable
-      style={{ width: '250px' }}
+      style={{ minWidth: '200px' }}
       cover={<img alt="Playlist" src={imageUrl} />}
     >
       <Meta title={name} description={description} />
